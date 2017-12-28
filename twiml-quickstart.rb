@@ -23,13 +23,13 @@ end
 get '/start-fizzbuzz' do
   number = params['Digits'].to_i
   Twilio::TwiML::VoiceResponse.new do |response|
-    for i in 1..number
+    (1..number).each do |i|
       response.say convert_number(i)
     end
   end.to_s
 end
 
-def convert_number( number )
+def convert_number(number)
   if number % 3 == 0 and number % 5 == 0
     return 'Fizz Buzz'
   end
