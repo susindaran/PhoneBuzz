@@ -18,7 +18,7 @@ class TwilioController < ApplicationController
   def fizzbuzz
     response = Twilio::TwiML::VoiceResponse.new do |response|
 
-      response.gather(input: 'dtmf', action: '/say-fizzbuzz', method: 'GET') do |gather|
+      response.gather(input: 'dtmf', action: '/twilio/say-fizzbuzz', method: 'GET') do |gather|
         gather.say('Please enter a number')
       end
 
