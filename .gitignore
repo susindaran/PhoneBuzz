@@ -23,3 +23,6 @@
 # RubyMine
 .idea/workspace.xml
 .idea/tasks.xml
+
+# Environment config file
+.env
