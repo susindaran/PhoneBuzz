@@ -4,7 +4,7 @@ class TwilioController < ApplicationController
   include Webhookable
   include FizzBuzzHelper
 
-  after_action :set_xml_content_type, only: [:test_voice, :fizzbuzz, :say_fizzbuzz]
+  after_action :set_xml_content_type, except: [:make_call]
   skip_before_action :verify_authenticity_token
   before_action :load_twilio_creds
 
