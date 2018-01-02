@@ -35,6 +35,9 @@ gem 'jbuilder', '~> 2.5'
 # Twilio
 gem 'twilio-ruby'
 
+# Bootstrap
+gem 'bootstrap'
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 

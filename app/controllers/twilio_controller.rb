@@ -4,7 +4,7 @@ class TwilioController < ApplicationController
   include Webhookable
   include FizzBuzzHelper
 
-  after_action :set_xml_content_type
+  after_action :set_xml_content_type, only: [:test_voice, :fizzbuzz, :say_fizzbuzz]
   skip_before_action :verify_authenticity_token
   before_action :load_twilio_creds
 
@@ -42,15 +42,19 @@ class TwilioController < ApplicationController
   end
 
   def make_call
+    @target_phone_number = params['phone_number']
+
     client = Twilio::REST::Client.new(@twilio_account_sid, @twilio_token)
 
     call = client.calls.create(
         application_sid: @twilio_app_sid,
-        to: '+16462035671',
+        to: @target_phone_number,
         from: @twilio_number
     )
 
-    render :plain => 'Call incoming!'
+    respond_to do |format|
+      format.js
+    end
   end
 
   def load_twilio_creds
