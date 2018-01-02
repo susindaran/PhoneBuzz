@@ -46,15 +46,21 @@ class TwilioController < ApplicationController
     @alert_type = 'alert-success'
 
     response_status_code = 200
+    delay = params['delay']
+
     client = Twilio::REST::Client.new(@twilio_account_sid, @twilio_token)
 
     begin
-      client.calls.create(
-          application_sid: @twilio_app_sid,
-          to: @target_phone_number,
-          from: @twilio_number
-      )
-      @message = "#{@target_phone_number} will be getting a call shortly!"
+      @job_id = Rufus::Scheduler.singleton.in delay do
+        client.calls.create(
+            application_sid: @twilio_app_sid,
+            to: @target_phone_number,
+            from: @twilio_number
+        )
+      end
+
+      logger.info "Job ID: #{@job_id}"
+      @message = "#{@target_phone_number} will be getting a call in #{delay}!"
     rescue => e
       logger.tagged('Make Call') { logger.error e }
       @message = 'An error occurred while making the call!'

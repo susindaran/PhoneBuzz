@@ -39,6 +39,9 @@ gem 'twilio-ruby'
 # Bootstrap
 gem 'bootstrap'
 
+# Scheduler
+gem 'rufus-scheduler'
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 

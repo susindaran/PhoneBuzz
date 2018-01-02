@@ -1,6 +1,10 @@
 <%= form_tag('twilio/make_call', method: 'post', remote: true) do %>
-    <%= label_tag(:q, 'Phone Number') %>
+    <%= label_tag(:phone_number, 'Phone Number') %>
     <%= text_field_tag(:phone_number) %>
+    <br/>
+    <%= label_tag(:delay, 'Delay') %>
+    <%= text_field_tag(:delay) %>
+    <br />
     <%= submit_tag('Call') %>
 <% end %>
 
