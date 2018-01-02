@@ -43,18 +43,29 @@ class TwilioController < ApplicationController
 
   def make_call
     @target_phone_number = params['phone_number']
+    @alert_type = 'alert-success'
 
+    response_status_code = 200
     client = Twilio::REST::Client.new(@twilio_account_sid, @twilio_token)
 
-    call = client.calls.create(
-        application_sid: @twilio_app_sid,
-        to: @target_phone_number,
-        from: @twilio_number
-    )
+    begin
+      client.calls.create(
+          application_sid: @twilio_app_sid,
+          to: @target_phone_number,
+          from: @twilio_number
+      )
+      @message = "#{@target_phone_number} will be getting a call shortly!"
+    rescue => e
+      logger.tagged('Make Call') { logger.error e }
+      @message = 'An error occurred while making the call!'
+      @alert_type = 'alert-danger'
+      response_status_code = 500
+    end
 
     respond_to do |format|
-      format.js
+      format.js { render 'twilio/make_call', status: response_status_code }
     end
+
   end
 
   def load_twilio_creds

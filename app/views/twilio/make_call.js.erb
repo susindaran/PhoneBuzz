@@ -1,1 +1,5 @@
-$("#form_submission").text("<%= @target_phone_number %> will be getting a call shortly!");
+$("#form_submission").html("<%= escape_javascript(render partial: 'alert_message', locals: { message: @message, alert_type: @alert_type } ) %>");
+
+setTimeout(function(){
+    $(".alert-dismissible").alert('close');
+}, 3000);
