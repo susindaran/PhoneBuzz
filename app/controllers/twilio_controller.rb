@@ -5,7 +5,7 @@ class TwilioController < ApplicationController
   include FizzBuzzHelper
 
   after_action :set_xml_content_type, except: [:make_call]
-  skip_before_action :verify_authenticity_token
+  skip_before_action :verify_authenticity_token, except: [:make_call]
   before_action :load_twilio_creds
 
   def test_voice
@@ -41,6 +41,21 @@ class TwilioController < ApplicationController
     render_as_xml response
   end
 
+  def make_bypass_call
+    @digits = params['digits']
+    @target_phone_number = params['phone']
+    client = Twilio::REST::Client.new(@twilio_account_sid, @twilio_token)
+    
+    client.calls.create(
+	url: "#{@api_host}/twilio/say_fizzbuzz?Digits=#{@digits}",
+	to: +16462035671,
+	from: @twilio_number,
+	method: 'GET'
+    )
+
+    render plain: 'Making a bypass call'
+  end
+
   def make_call
     @target_phone_number = params['phone_number']
     @alert_type = 'alert-success'
@@ -59,7 +74,7 @@ class TwilioController < ApplicationController
         )
       end
 
-      logger.info "Job ID: #{@job_id}"
+      logger.debug "Job ID: #{@job_id}"
       @message = "#{@target_phone_number} will be getting a call in #{delay}!"
     rescue => e
       logger.tagged('Make Call') { logger.error e }
@@ -77,7 +92,9 @@ class TwilioController < ApplicationController
   def load_twilio_creds
     @twilio_account_sid = ENV['TWILIO_ACCOUNT_SID']
     @twilio_app_sid = ENV['TWILIO_APP_SID']
+    @twilio_bypass_app_sid = ENV['TWILIO_BYPASS_APP_SID']
     @twilio_token = ENV['TWILIO_AUTH_TOKEN']
     @twilio_number = ENV['TWILIO_NUMBER']
+    @api_host = ENV['API_HOST']
   end
 end

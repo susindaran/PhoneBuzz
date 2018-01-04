@@ -6,5 +6,6 @@ Rails.application.routes.draw do
   get 'twilio/test_voice'
   get 'twilio/fizzbuzz'
   get 'twilio/say_fizzbuzz'
+  get 'twilio/make_bypass_call'
   post 'twilio/make_call'
 end
