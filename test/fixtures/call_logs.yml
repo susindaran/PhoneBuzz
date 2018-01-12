@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  number: MyString
+  delay: MyString
+  digits: MyString
+
+two:
+  number: MyString
+  delay: MyString
+  digits: MyString

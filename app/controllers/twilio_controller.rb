@@ -4,9 +4,8 @@ class TwilioController < ApplicationController
   include Webhookable
   include FizzBuzzHelper
 
-  after_action :set_xml_content_type, except: [:make_call]
-  skip_before_action :verify_authenticity_token, except: [:make_call]
-  before_action :load_twilio_creds
+  skip_before_action :verify_authenticity_token
+  after_action :set_xml_content_type
 
   def test_voice
     response = Twilio::TwiML::VoiceResponse.new do |r|
@@ -39,66 +38,5 @@ class TwilioController < ApplicationController
     end
 
     render_as_xml response
-  end
-
-  def make_bypass_call
-    digits = params['digits']
-    target_phone_number = params['phone_number']
-    delay = params['delay']
-    url = "#{@api_host}/twilio/say_fizzbuzz?Digits=#{digits}"
-
-    schedule_call( delay, target_phone_number, url, 'GET')
-
-    render plain: 'Making a bypass call'
-  end
-
-  def make_call
-    @target_phone_number = params['phone_number']
-    @alert_type = 'alert-success'
-
-    response_status_code = 200
-    delay = params['delay']
-
-    url = "#{@api_host}/twilio/fizzbuzz"
-
-    begin
-      @job_id = schedule_call( delay, @target_phone_number, url, 'GET' )
-      logger.debug "Job ID: #{@job_id}"
-      @message = "#{@target_phone_number} will be getting a call in #{delay}!"
-    rescue => e
-      logger.tagged('Make Call') { logger.error e }
-      @message = 'An error occurred while making the call!'
-      @alert_type = 'alert-danger'
-      response_status_code = 500
-    end
-
-    respond_to do |format|
-      format.js { render 'twilio/make_call', status: response_status_code }
-    end
-
-  end
-
-  private
-
-  def schedule_call( delay, target_phone_number, url, method)
-    client = Twilio::REST::Client.new(@twilio_account_sid, @twilio_token)
-
-    @job_id = Rufus::Scheduler.singleton.in delay do
-      client.calls.create(
-          url: url,
-          method: method,
-          to: target_phone_number,
-          from: @twilio_number
-      )
-    end
-  end
-
-  def load_twilio_creds
-    @twilio_account_sid = ENV['TWILIO_ACCOUNT_SID']
-    @twilio_app_sid = ENV['TWILIO_APP_SID']
-    @twilio_bypass_app_sid = ENV['TWILIO_BYPASS_APP_SID']
-    @twilio_token = ENV['TWILIO_AUTH_TOKEN']
-    @twilio_number = ENV['TWILIO_NUMBER']
-    @api_host = ENV['API_HOST']
   end
 end
