@@ -18,7 +18,7 @@ class TwilioController < ApplicationController
   def fizzbuzz
     response = Twilio::TwiML::VoiceResponse.new do |response|
 
-      response.gather(input: 'dtmf', action: '/twilio/say_fizzbuzz', method: 'GET') do |gather|
+      response.gather(input: 'dtmf', action: "/twilio/say_fizzbuzz?log_id=#{params[:log_id]}", method: 'GET') do |gather|
         gather.say('Please enter a number.')
       end
 
@@ -30,9 +30,13 @@ class TwilioController < ApplicationController
   end
 
   def say_fizzbuzz
-    number = params['Digits'].to_i
+    digits = params['Digits'].to_i
+    call_log = CallLog.find(params[:log_id])
+    call_log.digits = digits
+    logger.error 'Unable to update log record' unless call_log.save
+
     response = Twilio::TwiML::VoiceResponse.new do |response|
-      (1..number).each do |i|
+      (1..digits).each do |i|
         response.say FizzBuzzHelper::convert_number(i)
       end
     end
