@@ -42,16 +42,12 @@ class TwilioController < ApplicationController
   end
 
   def make_bypass_call
-    @digits = params['digits']
-    @target_phone_number = params['phone']
-    client = Twilio::REST::Client.new(@twilio_account_sid, @twilio_token)
-    
-    client.calls.create(
-	url: "#{@api_host}/twilio/say_fizzbuzz?Digits=#{@digits}",
-	to: +16462035671,
-	from: @twilio_number,
-	method: 'GET'
-    )
+    digits = params['digits']
+    target_phone_number = params['phone_number']
+    delay = params['delay']
+    url = "#{@api_host}/twilio/say_fizzbuzz?Digits=#{digits}"
+
+    schedule_call( delay, target_phone_number, url, 'GET')
 
     render plain: 'Making a bypass call'
   end
@@ -63,17 +59,10 @@ class TwilioController < ApplicationController
     response_status_code = 200
     delay = params['delay']
 
-    client = Twilio::REST::Client.new(@twilio_account_sid, @twilio_token)
+    url = "#{@api_host}/twilio/fizzbuzz"
 
     begin
-      @job_id = Rufus::Scheduler.singleton.in delay do
-        client.calls.create(
-            application_sid: @twilio_app_sid,
-            to: @target_phone_number,
-            from: @twilio_number
-        )
-      end
-
+      @job_id = schedule_call( delay, @target_phone_number, url, 'GET' )
       logger.debug "Job ID: #{@job_id}"
       @message = "#{@target_phone_number} will be getting a call in #{delay}!"
     rescue => e
@@ -87,6 +76,21 @@ class TwilioController < ApplicationController
       format.js { render 'twilio/make_call', status: response_status_code }
     end
 
+  end
+
+  private
+
+  def schedule_call( delay, target_phone_number, url, method)
+    client = Twilio::REST::Client.new(@twilio_account_sid, @twilio_token)
+
+    @job_id = Rufus::Scheduler.singleton.in delay do
+      client.calls.create(
+          url: url,
+          method: method,
+          to: target_phone_number,
+          from: @twilio_number
+      )
+    end
   end
 
   def load_twilio_creds

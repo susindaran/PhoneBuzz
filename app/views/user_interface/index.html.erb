@@ -8,4 +8,17 @@
     <%= submit_tag('Call') %>
 <% end %>
 
+<%= form_tag('twilio/make_bypass_call', method: 'post', remote: true) do %>
+    <%= label_tag(:phone_number, 'Phone Number') %>
+    <%= text_field_tag(:phone_number) %>
+    <br/>
+    <%= label_tag(:delay, 'Delay') %>
+    <%= text_field_tag(:delay) %>
+    <br />
+    <%= label_tag(:digits, 'Digits') %>
+    <%= text_field_tag(:digits) %>
+    <br />
+    <%= submit_tag('Bypass Call') %>
+<% end %>
+
 <div id="form_submission"></div>
