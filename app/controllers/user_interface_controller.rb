@@ -4,17 +4,16 @@ class UserInterfaceController < ApplicationController
   before_action :load_twilio_creds
 
   def index
+    @call_logs = CallLog.all
   end
 
   def make_bypass_call
-    digits = params['digits']
-    target_phone_number = params['phone_number']
-    delay = params['delay']
-    url = "#{@api_host}/twilio/say_fizzbuzz?Digits=#{digits}"
+    call_log = CallLog.find(params[:id])
+    url = "#{@api_host}/twilio/say_fizzbuzz?Digits=#{call_log.digits}"
 
-    @call_log.attributes = {number: target_phone_number, delay: delay, digits: digits}
+    @call_log.attributes = {number: call_log.number, delay: call_log.delay, digits: call_log.digits}
 
-    schedule_call(delay, target_phone_number, url, 'GET')
+    schedule_call(call_log.delay, call_log.number, url, 'GET')
   end
 
   def make_call

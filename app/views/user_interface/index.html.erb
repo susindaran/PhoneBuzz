@@ -8,17 +8,26 @@
     <%= submit_tag('Call') %>
 <% end %>
 
-<%= form_tag(make_bypass_call_path, method: 'post', remote: true) do %>
-    <%= label_tag(:phone_number, 'Phone Number') %>
-    <%= text_field_tag(:phone_number) %>
-    <br/>
-    <%= label_tag(:delay, 'Delay') %>
-    <%= text_field_tag(:delay) %>
-    <br />
-    <%= label_tag(:digits, 'Digits') %>
-    <%= text_field_tag(:digits) %>
-    <br />
-    <%= submit_tag('Bypass Call') %>
-<% end %>
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Number</th>
+      <th>Delay</th>
+      <th>Digits Entered</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @call_logs.each do |call_log| %>
+    <tr>
+      <td><%= call_log.number %></td>
+      <td><%= call_log.delay %></td>
+      <td><%= call_log.digits %></td>
+      <td><%= link_to 'Redial', make_bypass_call_path(call_log), method: :post, remote: true %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
 
 <div id="form_submission"></div>
