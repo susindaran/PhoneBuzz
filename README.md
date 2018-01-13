@@ -16,7 +16,7 @@ root directory like the sample given below.
 
 ##### Heroku Deployment
 A `Procfile` is already present in this project for heroku deployment. <br>
-For the environment variables, create them using the ```heroku config:set``` command.
+For the environment variables, create them using the ```heroku config:set``` command. <br>
 Example: ```heroku config:set KEY=VALUE```
 
 ###### Download required gems

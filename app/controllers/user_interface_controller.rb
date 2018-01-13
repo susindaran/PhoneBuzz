@@ -28,28 +28,34 @@ class UserInterfaceController < ApplicationController
     @alert_type = 'alert-success'
     response_status_code = 200
 
-    begin
-      @call_log.attributes = {number: target_phone_number, delay: delay}
-      raise Exception.new('Unable to record the call log') unless @call_log.save
+    @call_log.attributes = {number: target_phone_number, delay: delay}
+    if @call_log.valid?
+      begin
+        raise Exception.new('Unable to record the call log') unless @call_log.save
 
-      params[:log_id] = @call_log.id
-      client = Twilio::REST::Client.new(@twilio_account_sid, @twilio_auth_token)
+        params[:log_id] = @call_log.id
+        client = Twilio::REST::Client.new(@twilio_account_sid, @twilio_auth_token)
 
-      @job_id = Rufus::Scheduler.singleton.in delay do
-        client.calls.create(
-            url: url + "?#{params.to_query}",
-            method: method,
-            to: target_phone_number,
-            from: @twilio_number
-        )
+        @job_id = Rufus::Scheduler.singleton.in delay do
+          client.calls.create(
+              url: url + "?#{params.to_query}",
+              method: method,
+              to: target_phone_number,
+              from: @twilio_number
+          )
+        end
+
+        logger.tagged('Schedule Call') { logger.debug "Job ID: #{@job_id}" }
+      rescue => e
+        logger.tagged('Schedule Call') { logger.error e }
+        @message = 'An error occurred while making the call!'
+        @alert_type = 'alert-danger'
+        response_status_code = 500
       end
-
-      logger.tagged('Schedule Call') { logger.debug "Job ID: #{@job_id}" }
-    rescue => e
-      logger.tagged('Schedule Call') { logger.error e }
-      @message = 'An error occurred while making the call!'
+    else
+      @message = @call_log.errors.full_messages.join(' <br /> ')
       @alert_type = 'alert-danger'
-      response_status_code = 500
+      response_status_code = 400
     end
 
     respond_to do |format|
