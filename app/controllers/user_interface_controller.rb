@@ -33,7 +33,7 @@ class UserInterfaceController < ApplicationController
       raise Exception.new('Unable to record the call log') unless @call_log.save
 
       params[:log_id] = @call_log.id
-      client = Twilio::REST::Client.new(@twilio_account_sid, @twilio_token)
+      client = Twilio::REST::Client.new(@twilio_account_sid, @twilio_auth_token)
 
       @job_id = Rufus::Scheduler.singleton.in delay do
         client.calls.create(
@@ -67,9 +67,7 @@ class UserInterfaceController < ApplicationController
 
   def load_twilio_creds
     @twilio_account_sid = ENV['TWILIO_ACCOUNT_SID']
-    @twilio_app_sid = ENV['TWILIO_APP_SID']
-    @twilio_bypass_app_sid = ENV['TWILIO_BYPASS_APP_SID']
-    @twilio_token = ENV['TWILIO_AUTH_TOKEN']
+    @twilio_auth_token = ENV['TWILIO_AUTH_TOKEN']
     @twilio_number = ENV['TWILIO_NUMBER']
     @api_host = ENV['API_HOST']
   end

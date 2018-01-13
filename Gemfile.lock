@@ -57,6 +57,10 @@ GEM
     coffee-script-source (1.12.2)
     concurrent-ruby (1.0.5)
     crass (1.0.3)
+    dotenv (2.2.1)
+    dotenv-rails (2.2.1)
+      dotenv (= 2.2.1)
+      railties (>= 3.2, < 5.2)
     erubis (2.7.0)
     et-orbi (1.0.8)
       tzinfo
@@ -181,6 +185,7 @@ DEPENDENCIES
   bootstrap
   byebug
   coffee-rails (~> 4.2)
+  dotenv-rails
   jbuilder (~> 2.5)
   jquery-rails
   listen (~> 3.0.5)

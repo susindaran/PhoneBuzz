@@ -42,6 +42,9 @@ gem 'bootstrap'
 # Scheduler
 gem 'rufus-scheduler'
 
+# To load environment variables
+gem 'dotenv-rails', groups: [:development, :test]
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
