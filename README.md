@@ -1,6 +1,8 @@
 # PhoneBuzz
 A simple web application to play the FizzBuzz game through phone call using [Twilio](https://www.twilio.com/)
 
+[Sample Server Hosted](https://phonebuzz-lendup-challenge.herokuapp.com/)
+
 ### Setup
 
 The following configurations should be available in the rails ENV for the application to work
