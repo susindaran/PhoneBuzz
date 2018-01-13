@@ -1,33 +1,48 @@
-<%= form_tag(make_call_path, method: 'post', remote: true) do %>
-    <%= label_tag(:phone_number, 'Phone Number') %>
-    <%= text_field_tag(:phone_number) %>
-    <br/>
-    <%= label_tag(:delay, 'Delay') %>
-    <%= text_field_tag(:delay) %>
-    <br />
-    <%= submit_tag('Call') %>
-<% end %>
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Number</th>
-      <th>Delay</th>
-      <th>Digits Entered</th>
-    </tr>
-  </thead>
-  <tbody>
-  <% @call_logs.each do |call_log| %>
-    <tr>
-      <td><%= call_log.number %></td>
-      <td><%= call_log.delay %></td>
-      <td><%= call_log.digits %></td>
-      <td><%= link_to 'Redial', make_bypass_call_path(call_log), method: :post, remote: true %></td>
-    </tr>
+<div class="container-fluid">
+  <h1>PhoneBuzz</h1>
+</div>
+<div class="container-fluid">
+  <%= form_for @call_log, url: make_call_path, method: 'post', remote: true do |f| %>
+      <div class="form-group">
+        <%= f.text_field :number, placeholder: 'Phone Number', class: 'form-control mb-2 mr-sm-2 mb-sm-0', type: 'tel' %>
+      </div>
+      <div class="form-group">
+        <%= f.text_field :delay, placeholder: 'Delay', class: 'form-control mb-2 mr-sm-2 mb-sm-0' %>
+        <small id="delayHelp" class="form-text text-muted">Input format for delay: [1-9][0-9]*[s|m|h|d|w|y]</small>
+      </div>
+      <div class="form-group">
+        <%= f.submit class: 'btn btn-primary', value: 'Call' %>
+      </div>
   <% end %>
-  </tbody>
-</table>
+</div>
+<div class="container-fluid">
+  <h3>Call Log</h3>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <table class="table table-striped table-hover">
+        <thead class="thead-default">
+        <tr>
+          <th>Number</th>
+          <th>Delay</th>
+          <th>Digits Entered</th>
+          <th>Replay</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @call_logs.each do |call_log| %>
+            <tr>
+              <td><%= call_log.number %></td>
+              <td><%= call_log.delay %></td>
+              <td><%= call_log.digits %></td>
+              <td><%= button_to 'Redial', make_bypass_call_path(call_log), method: :post, remote: true, class: 'btn btn-primary', disabled: call_log.digits.to_i <= 0  %></td>
+            </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
-<div id="form_submission"></div>
+<div id="form_submission_notification"></div>

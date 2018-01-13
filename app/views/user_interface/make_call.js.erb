@@ -1,4 +1,4 @@
-$("#form_submission").html("<%= escape_javascript(render partial: 'alert_message', locals: { message: @message, alert_type: @alert_type } ) %>");
+$("#form_submission_notification").html("<%= escape_javascript(render partial: 'alert_message', locals: { message: @message, alert_type: @alert_type } ) %>");
 
 setTimeout(function(){
     $(".alert-dismissible").alert('close');
