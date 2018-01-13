@@ -2,10 +2,27 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-.custom-alert
-{
+.custom-alert {
   position: fixed;
   top: 2%;
-  right:2%;
+  right: 2%;
   width: 30%;
+}
+
+tr {
+  width: 100%;
+  display: inline-table;
+  table-layout: fixed;
+
+}
+
+table{
+  height: 62vh;
+  display: -moz-groupbox;
+}
+tbody{
+  overflow-y: scroll;
+  height: 62vh;
+  width: 100%;
+  position: absolute;
 }
